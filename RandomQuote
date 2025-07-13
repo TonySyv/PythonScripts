@@ -1,0 +1,15 @@
+import random
+
+def get_random_quote():
+    quotes = [
+        "Believe you can and you're halfway there. – Theodore Roosevelt",
+        "The only way to do great work is to love what you do. – Steve Jobs",
+        "You miss 100% of the shots you don’t take. – Wayne Gretzky",
+        "Stay hungry, stay foolish. – Steve Jobs",
+        "Success is not in what you have, but who you are. – Bo Bennett"
+    ]
+    return random.choice(quotes)
+
+if __name__ == "__main__":
+    print("\n✨ Here's your inspirational quote for the day:\n")
+    print(f"📝 {get_random_quote()}\n")
