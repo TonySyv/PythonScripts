@@ -1,0 +1,61 @@
+import time
+import argparse
+from datetime import datetime
+import csv
+import os
+from tqdm import tqdm
+try:
+    import winsound  # Windows only
+except ImportError:
+    winsound = None
+
+
+# Log session to CSV
+def log_session(session_type: str, duration_min: int):
+    log_file = "pomodoro_log.csv"
+    file_exists = os.path.isfile(log_file)
+    with open(log_file, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(["Timestamp", "Session Type", "Duration (min)"])
+        writer.writerow([datetime.now().isoformat(), session_type, duration_min])
+
+
+# Beep sound
+def play_sound():
+    if winsound:
+        winsound.Beep(1000, 500)
+    else:
+        print("\a")  # Cross-platform fallback (system bell)
+
+
+# Timer with progress bar
+def run_timer(minutes: int, label: str):
+    total_seconds = minutes * 60
+    print(f"\n{label} for {minutes} minutes ({total_seconds} seconds).")
+    for _ in tqdm(range(total_seconds), desc=label, unit="s"):
+        time.sleep(1)
+    play_sound()
+    log_session(label, minutes)
+    print(f"{label} completed!\n")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Terminal-based Pomodoro Timer")
+    parser.add_argument("--work", type=int, default=25, help="Work session duration in minutes")
+    parser.add_argument("--break", type=int, default=5, help="Break session duration in minutes")
+    parser.add_argument("--cycles", type=int, default=1, help="Number of Pomodoro cycles")
+
+    args = parser.parse_args()
+
+    for cycle in range(1, args.cycles + 1):
+        print(f"\n--- Cycle {cycle} ---")
+        run_timer(args.work, "Work Session")
+        if cycle != args.cycles:
+            run_timer(args.break, "Break Session")
+
+    print("✅ All Pomodoro cycles completed!")
+
+
+if __name__ == "__main__":
+    main()
